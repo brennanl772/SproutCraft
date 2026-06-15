@@ -46,6 +46,23 @@ def load_ohlcv_csv(filename: str) -> pd.DataFrame:
     return df[df["close"] > 0].dropna(subset=["close"])
 
 
+def load_xrp_daily() -> pd.DataFrame:
+    """XRP daily OHLCV (Binance XRPUSDT ≈ Coinbase XRP-USD), 2018-2025.
+
+    Source: public GitHub mirror of Binance daily candles. Used as a stand-in
+    for Coinbase XRP-USD (USDT ≈ USD) for backtesting until live Coinbase data
+    is wired in.
+    """
+    path = os.path.join(DATA_DIR, "xrp_daily.csv")
+    df = pd.read_csv(path)
+    df.columns = [c.strip().lower() for c in df.columns]
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.sort_values("date").set_index("date")
+    df = df[["open", "high", "low", "close"]].astype(float)
+    df["volume"] = 0.0
+    return df[df["close"] > 0].dropna(subset=["close"])
+
+
 def resample_ohlc(df: pd.DataFrame, rule: str) -> pd.DataFrame:
     """Resample a daily OHLCV frame to a coarser timeframe (e.g. 'W', 'ME')."""
     agg = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
