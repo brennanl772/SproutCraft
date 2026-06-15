@@ -33,6 +33,19 @@ def load_daily(symbol: str = "SPY") -> pd.DataFrame:
     return df
 
 
+def load_ohlcv_csv(filename: str) -> pd.DataFrame:
+    """Load any cached OHLCV CSV from ``data/`` (e.g. an Alpaca fetch).
+
+    Expects a date/datetime index column plus open/high/low/close/volume.
+    """
+    path = filename if os.path.isabs(filename) else os.path.join(DATA_DIR, filename)
+    df = pd.read_csv(path, index_col=0)
+    df.index = pd.to_datetime(df.index)
+    df.columns = [c.strip().lower() for c in df.columns]
+    df = df[["open", "high", "low", "close", "volume"]].astype(float).sort_index()
+    return df[df["close"] > 0].dropna(subset=["close"])
+
+
 def resample_ohlc(df: pd.DataFrame, rule: str) -> pd.DataFrame:
     """Resample a daily OHLCV frame to a coarser timeframe (e.g. 'W', 'ME')."""
     agg = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
