@@ -27,6 +27,7 @@ strategy.** Full analysis with tables and charts in
 pip install -r requirements.txt
 python -m backtest.run         # main challenge -> console + results/RESULTS.md + charts
 python -m backtest.experiment  # "what would it actually take?" (trailing stops, leverage sweep, QQQ)
+python -m backtest.advanced    # all timeframes + exit-rule comparison + tapered risk -> results/RESULTS_ADVANCED.md
 ```
 
 ## Layout
@@ -39,6 +40,7 @@ python -m backtest.experiment  # "what would it actually take?" (trailing stops,
 | `backtest/engine.py`, `metrics.py` | Lookahead-safe return engine + performance metrics (Sharpe, Sortino, max DD, etc.). |
 | `backtest/run.py` | Runs the full challenge and writes the report + charts. |
 | `backtest/experiment.py` | Empirically tests what it would take to actually reach $1M. |
+| `backtest/advanced.py` | Multi-timeframe (daily/weekly/150yr monthly), exit-rule comparison, and tapered-risk analysis. |
 | `data/` | Real historical data (SPY/QQQ daily 2015-2025; Shiller S&P monthly 1871-present). |
 | `results/` | Generated report and equity-curve charts. |
 

@@ -60,7 +60,21 @@ def simulate_growth(
     cost_per_side: float = 0.0005,
     leverage_cap: float | None = None,
     trail: bool = False,
+    risk_start: float | None = None,
 ) -> GrowthResult:
+    """If ``risk_start`` is given, the per-trade risk *tapers* from ``risk_start``
+    (when the account is at ``start``) down to ``risk`` (when it reaches
+    ``target``), scaled on log-balance progress. Otherwise risk is constant.
+    """
+    import math
+    log_start, log_target = math.log(start), math.log(target)
+
+    def current_risk(account: float) -> float:
+        if risk_start is None:
+            return risk
+        prog = (math.log(max(account, 1e-9)) - log_start) / (log_target - log_start)
+        prog = min(max(prog, 0.0), 1.0)
+        return risk_start * (1.0 - prog) + risk * prog
     o = df["open"].values
     h = df["high"].values
     l = df["low"].values
@@ -144,7 +158,7 @@ def simulate_growth(
                 stop = entry_price - risk_per_share
                 tgt = entry_price + rr * risk_per_share
                 stop_pct = risk_per_share / entry_price
-                leverage = risk / stop_pct
+                leverage = current_risk(account) / stop_pct
                 if leverage_cap is not None:
                     leverage = min(leverage, leverage_cap)
                 max_lev = max(max_lev, leverage)

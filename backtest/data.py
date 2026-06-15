@@ -33,6 +33,13 @@ def load_daily(symbol: str = "SPY") -> pd.DataFrame:
     return df
 
 
+def resample_ohlc(df: pd.DataFrame, rule: str) -> pd.DataFrame:
+    """Resample a daily OHLCV frame to a coarser timeframe (e.g. 'W', 'ME')."""
+    agg = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
+    out = df.resample(rule).agg(agg).dropna(subset=["close"])
+    return out
+
+
 def load_shiller_total_return() -> pd.DataFrame:
     """Return Shiller's monthly S&P 500 with a reconstructed total-return index.
 
