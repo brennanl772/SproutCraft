@@ -62,6 +62,7 @@ def simulate_growth(
     trail: bool = False,
     risk_start: float | None = None,
     stops: pd.Series | None = None,
+    dd_throttle: bool = False,
 ) -> GrowthResult:
     """If ``stops`` is given, the stop price for a trade entered on bar ``i`` is
     taken from ``stops`` at the signal bar (``i-1``) - e.g. a structural swing
@@ -171,7 +172,11 @@ def simulate_growth(
                 stop = entry_price - risk_per_share
                 tgt = entry_price + rr * risk_per_share
                 stop_pct = risk_per_share / entry_price
-                leverage = current_risk(account) / stop_pct
+                eff_risk = current_risk(account)
+                if dd_throttle and peak > 0:           # cut risk in drawdowns, restore at highs
+                    dd = account / peak - 1.0           # <= 0
+                    eff_risk *= max(0.25, 1.0 + 2.0 * dd)
+                leverage = eff_risk / stop_pct
                 if leverage_cap is not None:
                     leverage = min(leverage, leverage_cap)
                 max_lev = max(max_lev, leverage)

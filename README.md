@@ -42,7 +42,9 @@ python -m backtest.advanced    # all timeframes + exit-rule comparison + tapered
 | `backtest/experiment.py` | Empirically tests what it would take to actually reach $1M. |
 | `backtest/advanced.py` | Multi-timeframe (daily/weekly/150yr monthly), exit-rule comparison, and tapered-risk analysis. |
 | `backtest/alpaca_data.py` | Free Alpaca market-data loader (set `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY`) — pulls daily *and* intraday bars. |
-| `data/` | Real historical data (SPY/QQQ daily 2015-2025; Shiller S&P monthly 1871-present). |
+| `backtest/mystrategy.py` | Backtests the uptrend swing strategy (HH+HL+>20EMA, swing-low stop, 1:2). |
+| `tradingview/uptrend_bot.pine` | The strategy as a live TradingView bot for the XRP/USD & BTC/USD 1h charts. |
+| `data/` | Real historical data (SPY/QQQ daily; BTC/ETH/XRP/ADA/DOGE/LTC/BNB daily; Shiller S&P monthly 1871-present). |
 | `results/` | Generated report and equity-curve charts. |
 
 ## Method notes (so the numbers are trustworthy)
