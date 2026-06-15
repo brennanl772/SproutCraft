@@ -37,8 +37,9 @@ strategy("Uptrend Swing Bot",
 
 // ---------------------------------------------------------------- Inputs ----
 emaLen   = input.int(20,   "Trend EMA length", minval = 1, group = "Trend")
-pivLeft  = input.int(3,    "Swing strength (left bars)",  minval = 1, group = "Swings")
-pivRight = input.int(3,    "Swing strength (right bars)", minval = 1, group = "Swings")
+// Swing strength 12 is tuned for the noisy 1h timeframe; use ~3 on daily charts.
+pivLeft  = input.int(12,   "Swing strength (left bars)",  minval = 1, group = "Swings")
+pivRight = input.int(12,   "Swing strength (right bars)", minval = 1, group = "Swings")
 rr       = input.float(2.0,"Reward : Risk (take-profit multiple)", minval = 0.5, step = 0.5, group = "Exits")
 bufPct   = input.float(0.1,"Stop buffer below higher low (%)", minval = 0.0, step = 0.1, group = "Exits") / 100.0
 riskPct  = input.float(3.0,"Risk per trade (% of equity)", minval = 0.1, maxval = 100, step = 0.5, group = "Sizing") / 100.0
