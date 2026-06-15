@@ -61,8 +61,14 @@ def simulate_growth(
     leverage_cap: float | None = None,
     trail: bool = False,
     risk_start: float | None = None,
+    stops: pd.Series | None = None,
 ) -> GrowthResult:
-    """If ``risk_start`` is given, the per-trade risk *tapers* from ``risk_start``
+    """If ``stops`` is given, the stop price for a trade entered on bar ``i`` is
+    taken from ``stops`` at the signal bar (``i-1``) - e.g. a structural swing
+    low - instead of being derived from ATR. The 1:R target is then measured
+    from that stop distance.
+
+    If ``risk_start`` is given, the per-trade risk *tapers* from ``risk_start``
     (when the account is at ``start``) down to ``risk`` (when it reaches
     ``target``), scaled on log-balance progress. Otherwise risk is constant.
     """
@@ -80,6 +86,7 @@ def simulate_growth(
     l = df["low"].values
     c = df["close"].values
     a = atr(df, atr_n).values
+    stop_arr = stops.reindex(df.index).values if stops is not None else None
     idx = df.index
     n = len(df)
     entries = entries.reindex(df.index).fillna(False).values.astype(bool)
@@ -151,9 +158,15 @@ def simulate_growth(
                     days_to_target = (idx[i] - first_trade_date).days
 
         # ---- look for a new entry (signal on i-1, fill at open of i) ------ #
-        if not in_trade and entries[i - 1] and not np.isnan(a[i - 1]):
+        if not in_trade and entries[i - 1]:
             entry_price = o[i]
-            risk_per_share = atr_mult * a[i - 1]
+            if stop_arr is not None:                 # structural stop (e.g. swing low)
+                sl = stop_arr[i - 1]
+                risk_per_share = entry_price - sl if (sl == sl and sl > 0) else 0.0
+            elif not np.isnan(a[i - 1]):             # ATR-based stop
+                risk_per_share = atr_mult * a[i - 1]
+            else:
+                risk_per_share = 0.0
             if risk_per_share > 0 and entry_price > 0:
                 stop = entry_price - risk_per_share
                 tgt = entry_price + rr * risk_per_share

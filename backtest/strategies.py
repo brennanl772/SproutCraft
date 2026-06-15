@@ -164,6 +164,54 @@ def keltner_breakout(df: pd.DataFrame) -> pd.Series:
     return df["close"] > upper
 
 
+# --------------------------------------------------------------------------- #
+# Swing-structure helpers (for the user's uptrend strategy)
+# --------------------------------------------------------------------------- #
+def _pivots(series: pd.Series, left: int, right: int, kind: str) -> pd.Series:
+    """Confirmed swing pivots, placed at the bar they become *known* (center +
+    ``right``) so there is no lookahead. NaN on non-pivot bars."""
+    vals = series.values
+    n = len(vals)
+    out = np.full(n, np.nan)
+    for j in range(left, n - right):
+        window = vals[j - left:j + right + 1]
+        if kind == "low" and vals[j] == window.min():
+            out[j + right] = vals[j]
+        elif kind == "high" and vals[j] == window.max():
+            out[j + right] = vals[j]
+    return pd.Series(out, index=series.index)
+
+
+def uptrend_swing(df: pd.DataFrame, left: int = 3, right: int = 3,
+                  ema_n: int = 20, buffer: float = 0.001):
+    """User's strategy: buy an intact uptrend, stop just below the last higher low.
+
+    Trend is 'intact' when, using only confirmed swings:
+      * higher highs forming (latest swing high > prior swing high), AND
+      * higher lows forming  (latest swing low  > prior swing low), AND
+      * price is above the 20 EMA.
+
+    Returns ``(entries, stops)`` where ``stops`` is the most recent higher low
+    minus a small buffer. The 1:2 target is applied by the simulator.
+    """
+    close = df["close"]
+    piv_high = _pivots(df["high"], left, right, "high")
+    piv_low = _pivots(df["low"], left, right, "low")
+
+    # Higher-high / higher-low flags, carried forward from each confirmation.
+    ch = piv_high.dropna()
+    hh = (ch > ch.shift(1)).reindex(df.index).ffill().fillna(False)
+    cl = piv_low.dropna()
+    hl = (cl > cl.shift(1)).reindex(df.index).ffill().fillna(False)
+
+    last_low = piv_low.ffill()                       # most recent confirmed higher low
+    ema = close.ewm(span=ema_n, adjust=False).mean()
+
+    entries = hh & hl & (close > ema) & last_low.notna()
+    stops = last_low * (1.0 - buffer)                # "slightly below" the higher low
+    return entries.fillna(False), stops
+
+
 STRATEGIES = {
     "RSI(2) Mean Reversion (Connors)": rsi2_meanrev,
     "Bollinger Band Reversion": bollinger_reversion,
