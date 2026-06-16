@@ -1,8 +1,0 @@
-__pycache__/
-*.pyc
-
-# Never commit credentials
-*cdp_api_key*
-*.pem
-*secret*
-.env

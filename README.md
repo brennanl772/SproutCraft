@@ -1,63 +1,49 @@
-# SproutCraft — Strategy Backtester
+# SproutCraft — Robinhood Trading MCP
 
-A small, honest backtesting toolkit that answers a specific challenge:
+Clean slate. This repo registers Robinhood's official **trading MCP server** so a
+Claude Code agent can read your account and place trades through Robinhood's own
+sanctioned interface.
 
-> Starting with **$50**, risking **3%** per trade with a **1:2** reward, trading
-> the **S&P 500 (SPY)** long — which well-known strategy compounds to
-> **$1,000,000** fastest without the account ever going negative?
+The server is declared in [`.mcp.json`](.mcp.json):
 
-It tests a battery of famous, objectively-defined strategies on **real**
-historical data, sizes positions by the 3%/1:2 risk rule, and reports which got
-furthest, which held up long term, and which failed.
-
-## TL;DR result
-
-**None of them reach $1,000,000** — and the reason is structural, not a matter of
-picking the "right" strategy. With a fixed 1:2 bracket, a strategy's fate is just
-`win rate × number of trades`, and daily S&P data physically caps you near ~540
-non-overlapping trades. To hit $1M you'd need a **56%+ win rate sustained at 1:2**
-(no long S&P strategy does — good entries top out ~50-52%). **Leverage makes it
-worse, not better** (volatility drag). Plain **buy & hold beat every active
-strategy.** Full analysis with tables and charts in
-[`results/RESULTS.md`](results/RESULTS.md).
-
-## Run it
-
-```bash
-pip install -r requirements.txt
-python -m backtest.run         # main challenge -> console + results/RESULTS.md + charts
-python -m backtest.experiment  # "what would it actually take?" (trailing stops, leverage sweep, QQQ)
-python -m backtest.advanced    # all timeframes + exit-rule comparison + tapered risk -> results/RESULTS_ADVANCED.md
+```json
+{
+  "mcpServers": {
+    "robinhood-trading": {
+      "type": "http",
+      "url": "https://agent.robinhood.com/mcp/trading"
+    }
+  }
+}
 ```
 
-## Layout
+## ⚠️ It won't connect until you do three things
 
-| File | Purpose |
-|------|---------|
-| `backtest/data.py` | Loads the bundled real datasets (SPY/QQQ daily; Shiller monthly). |
-| `backtest/strategies.py` | 14 well-known entry strategies (RSI-2/Connors, Turtle/Donchian, IBS, Williams %R, MACD, momentum, etc.). |
-| `backtest/sim.py` | Position-sizing growth simulator (3% risk, 1:2 bracket, ATR stop, optional trailing, leverage cap, fail-on-negative). |
-| `backtest/engine.py`, `metrics.py` | Lookahead-safe return engine + performance metrics (Sharpe, Sortino, max DD, etc.). |
-| `backtest/run.py` | Runs the full challenge and writes the report + charts. |
-| `backtest/experiment.py` | Empirically tests what it would take to actually reach $1M. |
-| `backtest/advanced.py` | Multi-timeframe (daily/weekly/150yr monthly), exit-rule comparison, and tapered-risk analysis. |
-| `backtest/alpaca_data.py` | Free Alpaca market-data loader (set `APCA_API_KEY_ID` / `APCA_API_SECRET_KEY`) — pulls daily *and* intraday bars. |
-| `backtest/mystrategy.py` | Backtests the uptrend swing strategy (HH+HL+>20EMA, swing-low stop, 1:2). |
-| `tradingview/uptrend_bot.pine` | The strategy as a TradingView bot (load on the SPY / BTC/USD 1h chart). |
-| `bot/` | Standalone Alpaca trading bot (S&P + BTC), paper by default, with safety rails. |
-| `data/` | Real historical data (SPY/QQQ daily; BTC/ETH/XRP/ADA/DOGE/LTC/BNB daily; Shiller S&P monthly 1871-present). |
-| `results/` | Generated report and equity-curve charts. |
+This is a managed Claude Code on the web environment, so registering the server
+in `.mcp.json` is necessary but not sufficient:
 
-## Method notes (so the numbers are trustworthy)
+1. **Allowlist the host.** `agent.robinhood.com` is currently **blocked** by this
+   environment's network egress policy (verified: `403 Host not in allowlist`).
+   Add `agent.robinhood.com` to the environment's **network egress** settings.
+   See the network docs: https://code.claude.com/docs/en/claude-code-on-the-web
+2. **Restart the session** so the new `.mcp.json` server is loaded.
+3. **Authenticate.** Complete Robinhood's login/OAuth when the MCP prompts. This
+   links *your* Robinhood account; credentials never go in this repo or chat.
 
-- **No lookahead:** signals computed at a bar's close are filled at the *next*
-  bar's open.
-- **Costs:** 5 bps per side (commission + slippage).
-- **One position at a time**, 60-bar time stop.
-- **Position sizing:** size set so a stop-out loses exactly 3% of the account,
-  which implies leverage on tight stops. A "no leverage (≤1×)" mode is also run —
-  the only configuration that *cannot* go negative under any gap.
-- Data is dividend/split adjusted (total-return basis).
+If you're instead running the **Claude Code CLI on your own machine**, you can
+register it there with:
 
-> ⚠️ This is research/education, not financial advice. Past results don't predict
-> the future, and "$X → $1,000,000" challenges are marketing, not strategies.
+```bash
+claude mcp add robinhood-trading --transport http https://agent.robinhood.com/mcp/trading
+```
+
+## After it connects
+
+Once the server is reachable and authenticated, the agent can discover the
+Robinhood trading tools and, with safety rails, help you trade:
+
+- **Read-only first** — check account, buying power, and positions before any order.
+- **Tiny size** to start, and **explicit confirmation before every live order**.
+- Real money is at risk the moment orders are live — start small.
+
+> Not financial advice. You are responsible for any trades placed on your account.
