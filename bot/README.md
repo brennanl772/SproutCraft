@@ -18,7 +18,13 @@ risk/reward, and a suggested position size.
 
 ## What runs where
 
-Three GitHub Actions (free, no computer needed):
+GitHub Actions (free, no computer needed):
+- **`ORB Live Monitor`** — fires near the 09:30 ET open, watches for the first
+  **opening-range breakout** of the day, and alerts you with entry / stop /
+  target / size. Defaults: 15-min range, 5-min bars, long breakouts, stop =
+  opposite end, target = 2× range, exit by close. Configure via the
+  `ORB_*` / `FIXED_STAKE` Action variables. *(ORB does not win every day —
+  check its backtest first.)*
 - **`Stock Signals`** — daily cron after market close → sends alerts to Telegram.
 - **`Paper Trading`** — daily cron → tracks how the strategy would do with
   *hypothetical* money from your start date, persists a ledger

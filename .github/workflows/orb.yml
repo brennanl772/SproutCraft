@@ -1,11 +1,17 @@
-name: Backtest
+name: ORB Live Monitor
 
 on:
+  schedule:
+    # 13:40 UTC = 09:40 ET during US summer (EDT). In winter (EST) the open is
+    # an hour later — change to "40 14 * * 1-5". The job then watches until
+    # ORB_MONITOR_UNTIL (ET) for the first breakout.
+    - cron: "40 13 * * 1-5"
   workflow_dispatch: {}
 
 jobs:
-  backtest:
+  orb:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -13,20 +19,14 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Daily strategy backtest
-        run: python -m bot.backtest | tee -a "$GITHUB_STEP_SUMMARY"
+      - run: python -m bot.run_orb
         env:
-          WATCHLIST: ${{ vars.WATCHLIST }}
-          BACKTEST_PERIOD: ${{ vars.BACKTEST_PERIOD }}
-          ACCOUNT_SIZE: ${{ vars.ACCOUNT_SIZE }}
-          RISK_PER_TRADE: ${{ vars.RISK_PER_TRADE }}
-      - name: ORB backtest
-        run: python -m bot.orb | tee -a "$GITHUB_STEP_SUMMARY"
-        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           WATCHLIST: ${{ vars.WATCHLIST }}
           ORB_RANGE_MINUTES: ${{ vars.ORB_RANGE_MINUTES }}
           ORB_DIRECTION: ${{ vars.ORB_DIRECTION }}
           ORB_TARGET_R: ${{ vars.ORB_TARGET_R }}
-          ORB_BACKTEST_DAYS: ${{ vars.ORB_BACKTEST_DAYS }}
+          FIXED_STAKE: ${{ vars.FIXED_STAKE }}
           ACCOUNT_SIZE: ${{ vars.ACCOUNT_SIZE }}
           RISK_PER_TRADE: ${{ vars.RISK_PER_TRADE }}
