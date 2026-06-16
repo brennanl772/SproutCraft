@@ -18,11 +18,20 @@ risk/reward, and a suggested position size.
 
 ## What runs where
 
-Two GitHub Actions (free, no computer needed):
+Three GitHub Actions (free, no computer needed):
 - **`Stock Signals`** — daily cron after market close → sends alerts to Telegram.
+- **`Paper Trading`** — daily cron → tracks how the strategy would do with
+  *hypothetical* money from your start date, persists a ledger
+  (`bot/paper_state.json`), and pings you when a paper position closes. **Watch
+  this for a few weeks before risking anything real.**
 - **`Backtest`** — run manually (Actions tab → *Run workflow*) → posts real
   historical metrics (win rate, profit factor, **max drawdown**, losing streak)
   to the run summary.
+
+> ⏰ **Scheduling caveat:** GitHub only fires `schedule:` crons from a repo's
+> **default branch**. While this lives on a feature branch, the daily runs won't
+> auto-trigger — use **Run workflow** (manual dispatch) to test, and merge to the
+> default branch once you want the daily cadence.
 
 ## One-time setup (all doable from your phone)
 

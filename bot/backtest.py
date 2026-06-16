@@ -35,7 +35,8 @@ class Trade:
         return (self.exit - self.entry) / risk if risk > 0 else 0.0
 
 
-def backtest_symbol(symbol: str, df) -> list[Trade]:
+def backtest_symbol(symbol: str, df) -> tuple[list[Trade], dict | None]:
+    """Return (closed trades, still-open position or None)."""
     data = compute_indicators(df).dropna()
     rows = list(data.itertuples())
     trades: list[Trade] = []
@@ -72,7 +73,15 @@ def backtest_symbol(symbol: str, df) -> list[Trade]:
             ))
             in_pos = False
 
-    return trades
+    open_pos = None
+    if in_pos:
+        open_pos = {
+            "entry_date": entry_date,
+            "entry": round(entry_price, 2),
+            "stop": round(stop, 2),
+            "target": round(target, 2),
+        }
+    return trades, open_pos
 
 
 def summarize(trades: list[Trade], starting_equity: float, risk: float) -> dict:
@@ -149,7 +158,8 @@ def run() -> None:
             print(f"[warn] {symbol}: {exc}")
             continue
         if not df.empty:
-            all_trades.extend(backtest_symbol(symbol, df))
+            trades, _ = backtest_symbol(symbol, df)
+            all_trades.extend(trades)
 
     all_trades.sort(key=lambda t: t.entry_date)
     result = summarize(all_trades, config.ACCOUNT_SIZE, config.RISK_PER_TRADE)
