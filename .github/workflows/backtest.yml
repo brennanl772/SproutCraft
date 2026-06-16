@@ -1,0 +1,32 @@
+name: Backtest
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Daily strategy backtest
+        run: python -m bot.backtest | tee -a "$GITHUB_STEP_SUMMARY"
+        env:
+          WATCHLIST: ${{ vars.WATCHLIST }}
+          BACKTEST_PERIOD: ${{ vars.BACKTEST_PERIOD }}
+          ACCOUNT_SIZE: ${{ vars.ACCOUNT_SIZE }}
+          RISK_PER_TRADE: ${{ vars.RISK_PER_TRADE }}
+      - name: ORB backtest
+        run: python -m bot.orb | tee -a "$GITHUB_STEP_SUMMARY"
+        env:
+          WATCHLIST: ${{ vars.WATCHLIST }}
+          ORB_RANGE_MINUTES: ${{ vars.ORB_RANGE_MINUTES }}
+          ORB_DIRECTION: ${{ vars.ORB_DIRECTION }}
+          ORB_TARGET_R: ${{ vars.ORB_TARGET_R }}
+          ORB_BACKTEST_DAYS: ${{ vars.ORB_BACKTEST_DAYS }}
+          ACCOUNT_SIZE: ${{ vars.ACCOUNT_SIZE }}
+          RISK_PER_TRADE: ${{ vars.RISK_PER_TRADE }}
