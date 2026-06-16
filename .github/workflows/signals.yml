@@ -1,0 +1,28 @@
+name: Stock Signals
+
+on:
+  schedule:
+    # ~21:10 UTC, shortly after the US market close (16:00 ET in DST / summer).
+    # In winter (EST) the close is 21:00 UTC; adjust the cron if needed.
+    - cron: "10 21 * * 1-5"
+  workflow_dispatch: {}
+
+jobs:
+  signals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m bot.run_signals
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          WATCHLIST: ${{ vars.WATCHLIST }}
+          ACCOUNT_SIZE: ${{ vars.ACCOUNT_SIZE }}
+          RISK_PER_TRADE: ${{ vars.RISK_PER_TRADE }}
