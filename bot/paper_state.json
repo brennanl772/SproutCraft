@@ -3,5 +3,12 @@
   "starting_equity": 10000.0,
   "equity": 10000.0,
   "closed": [],
-  "open": {}
+  "open": {
+    "META": {
+      "entry_date": "2026-07-15",
+      "entry": 663.6,
+      "stop": 612.8,
+      "target": 765.21
+    }
+  }
 }
