@@ -4,6 +4,12 @@
   "equity": 10000.0,
   "closed": [],
   "open": {
+    "NVDA": {
+      "entry_date": "2026-07-16",
+      "entry": 210.26,
+      "stop": 195.5,
+      "target": 239.79
+    },
     "META": {
       "entry_date": "2026-07-15",
       "entry": 663.6,
