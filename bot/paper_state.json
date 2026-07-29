@@ -1,7 +1,7 @@
 {
   "start_date": "2026-06-16",
   "starting_equity": 10000.0,
-  "equity": 9900.0,
+  "equity": 9801.0,
   "closed": [
     {
       "symbol": "META",
@@ -11,14 +11,16 @@
       "exit": 612.8,
       "reason": "stop-loss",
       "r": -1.0
+    },
+    {
+      "symbol": "NVDA",
+      "entry_date": "2026-07-16",
+      "exit_date": "2026-07-28",
+      "entry": 210.17,
+      "exit": 195.41,
+      "reason": "stop-loss",
+      "r": -1.0
     }
   ],
-  "open": {
-    "NVDA": {
-      "entry_date": "2026-07-16",
-      "entry": 210.17,
-      "stop": 195.41,
-      "target": 239.69
-    }
-  }
+  "open": {}
 }
