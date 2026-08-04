@@ -25,9 +25,15 @@
   "open": {
     "MSFT": {
       "entry_date": "2026-08-03",
-      "entry": 476.39,
-      "stop": 444.37,
-      "target": 540.45
+      "entry": 476.13,
+      "stop": 444.1,
+      "target": 540.19
+    },
+    "AMZN": {
+      "entry_date": "2026-08-04",
+      "entry": 276.06,
+      "stop": 256.16,
+      "target": 315.85
     }
   }
 }
