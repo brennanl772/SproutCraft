@@ -16,8 +16,8 @@
       "symbol": "NVDA",
       "entry_date": "2026-07-16",
       "exit_date": "2026-07-28",
-      "entry": 210.17,
-      "exit": 195.41,
+      "entry": 209.94,
+      "exit": 195.19,
       "reason": "stop-loss",
       "r": -1.0
     },
@@ -40,9 +40,15 @@
     },
     "NVDA": {
       "entry_date": "2026-08-06",
-      "entry": 221.53,
-      "stop": 205.78,
-      "target": 253.04
+      "entry": 221.28,
+      "stop": 205.55,
+      "target": 252.75
+    },
+    "META": {
+      "entry_date": "2026-09-11",
+      "entry": 653.02,
+      "stop": 610.05,
+      "target": 738.96
     }
   }
 }
