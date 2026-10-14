@@ -1,7 +1,7 @@
 {
   "start_date": "2026-06-16",
   "starting_equity": 10000.0,
-  "equity": 9897.07,
+  "equity": 10094.98,
   "closed": [
     {
       "symbol": "META",
@@ -38,20 +38,35 @@
       "exit": 738.86,
       "reason": "take-profit",
       "r": 2.0
+    },
+    {
+      "symbol": "MSFT",
+      "entry_date": "2026-08-03",
+      "exit_date": "2026-10-12",
+      "entry": 475.24,
+      "exit": 539.17,
+      "reason": "take-profit",
+      "r": 2.0
     }
   ],
   "open": {
-    "MSFT": {
-      "entry_date": "2026-08-03",
-      "entry": 475.24,
-      "stop": 443.27,
-      "target": 539.17
-    },
     "NVDA": {
       "entry_date": "2026-08-06",
       "entry": 221.28,
       "stop": 205.55,
       "target": 252.75
+    },
+    "AMZN": {
+      "entry_date": "2026-10-13",
+      "entry": 259.44,
+      "stop": 247.85,
+      "target": 282.63
+    },
+    "GOOGL": {
+      "entry_date": "2026-10-13",
+      "entry": 356.23,
+      "stop": 339.8,
+      "target": 389.1
     }
   }
 }
