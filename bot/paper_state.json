@@ -1,7 +1,7 @@
 {
   "start_date": "2026-06-16",
   "starting_equity": 10000.0,
-  "equity": 10094.98,
+  "equity": 9994.03,
   "closed": [
     {
       "symbol": "META",
@@ -47,6 +47,15 @@
       "exit": 539.17,
       "reason": "take-profit",
       "r": 2.0
+    },
+    {
+      "symbol": "GOOGL",
+      "entry_date": "2026-10-13",
+      "exit_date": "2026-10-16",
+      "entry": 356.23,
+      "exit": 339.8,
+      "reason": "stop-loss",
+      "r": -1.0
     }
   ],
   "open": {
@@ -61,12 +70,6 @@
       "entry": 259.44,
       "stop": 247.85,
       "target": 282.63
-    },
-    "GOOGL": {
-      "entry_date": "2026-10-13",
-      "entry": 356.23,
-      "stop": 339.8,
-      "target": 389.1
     }
   }
 }
