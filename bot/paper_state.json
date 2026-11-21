@@ -43,8 +43,8 @@
       "symbol": "MSFT",
       "entry_date": "2026-08-03",
       "exit_date": "2026-10-12",
-      "entry": 475.24,
-      "exit": 539.17,
+      "entry": 474.32,
+      "exit": 538.13,
       "reason": "take-profit",
       "r": 2.0
     },
