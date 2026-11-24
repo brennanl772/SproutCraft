@@ -1,7 +1,7 @@
 {
   "start_date": "2026-06-16",
   "starting_equity": 10000.0,
-  "equity": 9850.57,
+  "equity": 9752.06,
   "closed": [
     {
       "symbol": "META",
@@ -74,14 +74,16 @@
       "exit": 214.36,
       "reason": "ema-exit",
       "r": -0.44
+    },
+    {
+      "symbol": "AMZN",
+      "entry_date": "2026-11-09",
+      "exit_date": "2026-11-20",
+      "entry": 269.32,
+      "exit": 250.94,
+      "reason": "stop-loss",
+      "r": -1.0
     }
   ],
-  "open": {
-    "AMZN": {
-      "entry_date": "2026-11-09",
-      "entry": 269.32,
-      "stop": 250.94,
-      "target": 306.07
-    }
-  }
+  "open": {}
 }
